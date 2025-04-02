@@ -32,19 +32,19 @@ def index():
 def analyze():
     username = request.form.get('username')
     if not username:
-        return jsonify({'error': 'Kullanıcı adı gerekli'}), 400
+        return jsonify({'error': 'Username is required.'}), 400
         
     try:
-        print(f"Profil analizi başlatılıyor: {username}")
+        print(f"Starting profile analysis: {username}")
         
         # Instagram'ın rate limit'ini aşmamak için bekleme
         time.sleep(2)
         
         profile = Profile.from_username(L.context, username)
-        print(f"Profil bulundu: {profile.username}")
+        print(f"Profile found: {profile.username}")
         
         if profile.is_private:
-            return jsonify({'error': 'Bu hesap gizli. Sadece gizli olmayan hesaplar analiz edilebilir.'}), 400
+            return jsonify({'error': 'This account is private. Only public accounts can be analyzed.'}), 400
         
         # Profil bilgilerini topla
         profile_data = {
@@ -58,12 +58,12 @@ def analyze():
             'is_private': profile.is_private
         }
         
-        print(f"Temel profil bilgileri alındı: {json.dumps(profile_data, indent=2)}")
+        print(f"Basic profile information retrieved: {json.dumps(profile_data, indent=2)}")
         
         return jsonify(profile_data)
     except Exception as e:
-        print(f"Genel hata: {str(e)}")
-        return jsonify({'error': 'Instagram verilerine erişilemiyor. Lütfen daha sonra tekrar deneyin.'}), 400
+        print(f"General error: {str(e)}")
+        return jsonify({'error': 'Unable to access Instagram data. Please try again later.'}), 400
 
 if __name__ == '__main__':
     app.run(debug=True) 
